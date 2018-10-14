@@ -5,8 +5,6 @@ if (WEBGL.isWebGLAvailable() === false) {
 THREE.Cache.enabled = true;
 
 let container;
-let stats;
-let permalink;
 let hex;
 let color;
 let camera;
@@ -80,7 +78,6 @@ function decimalToHex(d) {
 function init() {
   container = document.createElement('div');
   document.body.appendChild(container);
-  permalink = document.getElementById('permalink');
 
   // CAMERA
   camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 1500);
@@ -96,31 +93,16 @@ function init() {
   let dirLight = new THREE.DirectionalLight(0xffffff, 0.125);
   dirLight.position.set(0, 0, 1).normalize();
   scene.add(dirLight);
+
   let pointLight = new THREE.PointLight(0xffffff, 1.5);
   pointLight.position.set(0, 100, 90);
   scene.add(pointLight);
 
   // Get text from hash
   let hash = document.location.hash.substr(1);
-  if (hash.length !== 0) {
-    let colorhash  = hash.substring(0, 6);
-    let fonthash   = hash.substring(6, 7);
-    let weighthash = hash.substring(7, 8);
-    let bevelhash  = hash.substring(8, 9);
-    let texthash   = hash.substring(10);
-    hex = colorhash;
-    pointLight.color.setHex(parseInt(colorhash, 16));
-    fontName = reverseFontMap[parseInt(fonthash, 10)];
-    fontWeight = reverseWeightMap[parseInt(weighthash, 10)];
-    bevelEnabled = parseInt(bevelhash, 10);
-    text = decodeURI(texthash);
-    updatePermalink();
+  pointLight.color.setHSL(Math.random(), 1, 0.5);
+  hex = decimalToHex(pointLight.color.getHex());
 
-  } else {
-    pointLight.color.setHSL(Math.random(), 1, 0.5);
-    hex = decimalToHex(pointLight.color.getHex());
-
-  }
   materials = [
     new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }), // front
     new THREE.MeshPhongMaterial({ color: 0xffffff }) // side
@@ -146,10 +128,6 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   container.appendChild(renderer.domElement);
 
-  // STATS
-  stats = new Stats();
-  container.appendChild(stats.dom);
-
   // EVENTS
   document.addEventListener('mousedown', onDocumentMouseDown, false);
   document.addEventListener('touchstart', onDocumentTouchStart, false);
@@ -158,7 +136,6 @@ function init() {
   document.getElementById('color').addEventListener('click', function() {
     pointLight.color.setHSL(Math.random(), 1, 0.5);
     hex = decimalToHex(pointLight.color.getHex());
-    updatePermalink();
   }, false);
   document.getElementById('font').addEventListener('click', function() {
     fontIndex++;
@@ -192,12 +169,6 @@ function onWindowResize() {
 //
 function boolToNum(b) {
   return b ? 1 : 0;
-}
-
-function updatePermalink() {
-  let link = hex + fontMap[fontName] + weightMap[fontWeight] + boolToNum(bevelEnabled) + '#' + encodeURI(text);
-  permalink.href = '#' + link;
-  window.location.hash = link;
 }
 
 function loadFont() {
@@ -264,7 +235,6 @@ function createText() {
 }
 
 function refreshText() {
-  updatePermalink();
   group.remove(textMesh1);
   if (mirror) group.remove(textMesh2);
   if (!text) return;
@@ -275,7 +245,6 @@ function onDocumentMouseDown(event) {
   event.preventDefault();
   document.addEventListener('mousemove', onDocumentMouseMove, false);
   document.addEventListener('mouseup', onDocumentMouseUp, false);
-  document.addEventListener('mouseout', onDocumentMouseOut, false);
   mouseXOnMouseDown = event.clientX - windowHalfX;
   targetRotationOnMouseDown = targetRotation;
 }
@@ -291,11 +260,6 @@ function onDocumentMouseUp(event) {
   document.removeEventListener('mouseout', onDocumentMouseOut, false);
 }
 
-function onDocumentMouseOut(event) {
-  document.removeEventListener('mousemove', onDocumentMouseMove, false);
-  document.removeEventListener('mouseup', onDocumentMouseUp, false);
-  document.removeEventListener('mouseout', onDocumentMouseOut, false);
-}
 
 function onDocumentTouchStart(event) {
   if (event.touches.length === 1) {
@@ -317,7 +281,6 @@ function onDocumentTouchMove(event) {
 function animate() {
   requestAnimationFrame(animate);
   render();
-  stats.update();
 }
 
 function render() {
