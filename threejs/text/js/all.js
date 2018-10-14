@@ -1,3 +1,7 @@
+import { scene } from './scene.js';
+import { camera, cameraTarget } from './camera.js';
+import { renderer } from './renderer.js';
+
 if (WEBGL.isWebGLAvailable() === false) {
   document.body.appendChild(WEBGL.getWebGLErrorMessage());
 }
@@ -5,10 +9,6 @@ if (WEBGL.isWebGLAvailable() === false) {
 THREE.Cache.enabled = true;
 
 let container;
-let camera;
-let cameraTarget;
-let scene;
-let renderer;
 let group;
 let textMesh1;
 let textMesh2;
@@ -66,28 +66,6 @@ function init() {
   container = document.createElement('div');
   document.body.appendChild(container);
 
-  // CAMERA
-  camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 1500);
-  camera.position.set(0, 400, 700);
-  cameraTarget = new THREE.Vector3(0, 150, 0);
-
-  // SCENE
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x000000);
-  scene.fog = new THREE.Fog(0x000000, 250, 1400);
-
-  // LIGHTS
-  let dirLight = new THREE.DirectionalLight(0xffffff, 0.125);
-  dirLight.position.set(0, 0, 1).normalize();
-  scene.add(dirLight);
-
-  let pointLight = new THREE.PointLight(0xffffff, 1.5);
-  pointLight.position.set(0, 100, 90);
-  scene.add(pointLight);
-
-  // Get text from hash
-  let hash = document.location.hash.substr(1);
-  pointLight.color.setHSL(Math.random(), 1, 0.5);
 
   materials = [
     new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }), // front
@@ -108,10 +86,6 @@ function init() {
   plane.rotation.x = -Math.PI / 2;
   scene.add(plane);
 
-  // RENDERER
-  renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
   container.appendChild(renderer.domElement);
 
   // EVENTS
@@ -149,11 +123,6 @@ function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-//
-function boolToNum(b) {
-  return b ? 1 : 0;
 }
 
 function loadFont() {
@@ -211,7 +180,7 @@ function createText() {
   if (mirror) {
     textMesh2 = new THREE.Mesh(textGeo, materials);
     textMesh2.position.x = centerOffset;
-    textMesh2.position.y = -hover;
+    textMesh2.position.y = -30; // hover
     textMesh2.position.z = height;
     textMesh2.rotation.x = Math.PI;
     textMesh2.rotation.y = Math.PI * 2;
@@ -242,7 +211,6 @@ function onDocumentMouseMove(event) {
 function onDocumentMouseUp(event) {
   document.removeEventListener('mousemove', onDocumentMouseMove, false);
   document.removeEventListener('mouseup', onDocumentMouseUp, false);
-  document.removeEventListener('mouseout', onDocumentMouseOut, false);
 }
 
 
