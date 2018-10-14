@@ -5,8 +5,6 @@ if (WEBGL.isWebGLAvailable() === false) {
 THREE.Cache.enabled = true;
 
 let container;
-let hex;
-let color;
 let camera;
 let cameraTarget;
 let scene;
@@ -16,17 +14,12 @@ let textMesh1;
 let textMesh2;
 let textGeo;
 let materials;
-let firstLetter = true;
 
-let text = 'three.js';
-let height = 20;
+let text = 'Yandex';
+let height = 20; // depth for text
 let size = 70;
-let hover = 30;
-let curveSegments = 4;
-let bevelThickness = 2;
-let bevelSize = 1.5;
-let bevelSegments = 3;
-let bevelEnabled = true;
+let bevelEnabled = true; // bold
+
 let font;
 let fontName = 'optimer'; // helvetiker, optimer, gentilis, droid sans, droid seri;
 let fontWeight = 'bold'; // normal bol;
@@ -69,12 +62,6 @@ init();
 
 animate();
 
-function decimalToHex(d) {
-  let hex = Number(d).toString(16);
-  hex = '000000'.substr(0, 6 - hex.length) + hex;
-  return hex.toUpperCase();
-}
-
 function init() {
   container = document.createElement('div');
   document.body.appendChild(container);
@@ -101,7 +88,6 @@ function init() {
   // Get text from hash
   let hash = document.location.hash.substr(1);
   pointLight.color.setHSL(Math.random(), 1, 0.5);
-  hex = decimalToHex(pointLight.color.getHex());
 
   materials = [
     new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }), // front
@@ -135,7 +121,6 @@ function init() {
 
   document.getElementById('color').addEventListener('click', function() {
     pointLight.color.setHSL(Math.random(), 1, 0.5);
-    hex = decimalToHex(pointLight.color.getHex());
   }, false);
   document.getElementById('font').addEventListener('click', function() {
     fontIndex++;
@@ -184,9 +169,9 @@ function createText() {
     font: font,
     size: size,
     height: height,
-    curveSegments: curveSegments,
-    bevelThickness: bevelThickness,
-    bevelSize: bevelSize,
+    curveSegments: 4,
+    bevelThickness: 2,
+    bevelSize: 1.5,
     bevelEnabled: bevelEnabled
   });
   textGeo.computeBoundingBox();
@@ -218,7 +203,7 @@ function createText() {
   textGeo = new THREE.BufferGeometry().fromGeometry(textGeo);
   textMesh1 = new THREE.Mesh(textGeo, materials);
   textMesh1.position.x = centerOffset;
-  textMesh1.position.y = hover;
+  textMesh1.position.y = 30; // hover
   textMesh1.position.z = 0;
   textMesh1.rotation.x = 0;
   textMesh1.rotation.y = Math.PI * 2;
