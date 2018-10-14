@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>My first three.js app</title>
-  <style>
-    body { margin: 0; }
-    canvas { width: 100%; height: 100% }
-  </style>
-</head>
-<body>
-  <script src="lib/three.js"></script>
-  <script src="js/test.js"></script>
-</body>
+	<head>
+		<title>three.js webgl - geometry - text</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="style.css">
 
+		<script src="lib/three.js"></script>
+		<script src="lib/GeometryUtils.js"></script>
+
+		<script src="lib/WebGL.js"></script>
+		<script src="lib/stats.min.js"></script>
+	</head>
+
+  <body>
+		<div id="info">
+		  <span class="button" id="color">change color</span>,
+			<span class="button" id="font">change font</span>,
+			<span class="button" id="weight">change weight</span>,
+			<span class="button" id="bevel">change bevel</span>
+			<a id="permalink" href="#">permalink</a>
+    </div>
+
+    <script src="js/index.js" type="module"></script>
+	</body>
 </html>

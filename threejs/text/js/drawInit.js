@@ -2,41 +2,29 @@ import { scene } from './scene.js';
 import { group } from './group.js';
 import { materials } from './materials.js';
 
-let textMesh1;
-let textMesh2;
-let textGeo;
 
-let text = 'Yandex';
-let height = 20; // depth for text
-let size = 70;
-let bevelEnabled = true; // bold
-
-let font;
-
-let mirror = true;
-
+const fontLoad = async () => {
+  return new Promise((resolve) => {
+    const fontName = 'optimer'; // helvetiker, optimer, gentilis, droid sans, droid seri;
+    const fontWeight = 'bold'; // normal bold;
+    new THREE.FontLoader().load('fonts/' + fontName + '_' + fontWeight + '.typeface.json', function (response) {
+      resolve(response);
+    });
+  });
+};
 
 init();
 
-function init() {
-  const fontName = 'optimer'; // helvetiker, optimer, gentilis, droid sans, droid seri;
-  const fontWeight = 'bold'; // normal bol;
-  const loader = new THREE.FontLoader();
-  loader.load('fonts/' + fontName + '_' + fontWeight + '.typeface.json', function (response) {
-    font = response;
-    refreshText();
-  });
-}
+async function init() {
+  const font = await fontLoad();
 
-function refreshText() {
-  group.remove(textMesh1);
-  if (mirror) group.remove(textMesh2);
-  if (!text) return;
-  createText();
-}
+  const mirror = true;
+  const text = 'Yandex';
+  const height = 20; // depth for text
+  const size = 70;
+  const bevelEnabled = true; // bold
 
-function createText() {
-  textGeo = new THREE.TextGeometry(text, {
+  const textGeo = new THREE.TextGeometry(text, {
     font: font,
     size: size,
     height: height,
@@ -45,8 +33,10 @@ function createText() {
     bevelSize: 1.5,
     bevelEnabled: bevelEnabled
   });
+
   textGeo.computeBoundingBox();
   textGeo.computeVertexNormals();
+
   // "fix" side normals by removing z-component of normals for side faces
   // (this doesn't work well for beveled geometry as then we lose nice curvature around z-axis)
   if (!bevelEnabled) {
@@ -72,21 +62,23 @@ function createText() {
   }
 
   const centerOffset = -0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x);
-  textGeo = new THREE.BufferGeometry().fromGeometry(textGeo);
-  textMesh1 = new THREE.Mesh(textGeo, materials);
-  textMesh1.position.x = centerOffset;
-  textMesh1.position.y = 30; // hover
-  textMesh1.position.z = 0;
-  textMesh1.rotation.x = 0;
-  textMesh1.rotation.y = Math.PI * 2;
-  group.add(textMesh1);
+  const textGeoBuffer = new THREE.BufferGeometry().fromGeometry(textGeo);
+
+  const mainMesh = new THREE.Mesh(textGeoBuffer, materials);
+  mainMesh.position.x = centerOffset;
+  mainMesh.position.y = 30; // hover
+  mainMesh.position.z = 0;
+  mainMesh.rotation.x = 0;
+  mainMesh.rotation.y = Math.PI * 2;
+  group.add(mainMesh);
+
   if (mirror) {
-    textMesh2 = new THREE.Mesh(textGeo, materials);
-    textMesh2.position.x = centerOffset;
-    textMesh2.position.y = -30; // hover
-    textMesh2.position.z = height;
-    textMesh2.rotation.x = Math.PI;
-    textMesh2.rotation.y = Math.PI * 2;
-    group.add(textMesh2);
+    const mirrorMesh = new THREE.Mesh(textGeoBuffer, materials);
+    mirrorMesh.position.x = centerOffset;
+    mirrorMesh.position.y = -30; // hover
+    mirrorMesh.position.z = height;
+    mirrorMesh.rotation.x = Math.PI;
+    mirrorMesh.rotation.y = Math.PI * 2;
+    group.add(mirrorMesh);
   }
 }
