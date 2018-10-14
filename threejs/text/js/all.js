@@ -1,16 +1,13 @@
 import { scene } from './scene.js';
 import { camera, cameraTarget } from './camera.js';
 import { renderer } from './renderer.js';
-import * as dom from './dom.js';
+import { targetRotation } from './dom/index.js';
+import { group } from './group.js';
+import * as plane from './plane.js';
 
-if (WEBGL.isWebGLAvailable() === false) {
-  document.body.appendChild(WEBGL.getWebGLErrorMessage());
-}
 
 THREE.Cache.enabled = true;
 
-let container;
-let group;
 let textMesh1;
 let textMesh2;
 let textGeo;
@@ -51,10 +48,6 @@ for (const i in weightMap) {
   reverseWeightMap[weightMap[i]] = i;
 }
 
-let targetRotation = 0;
-let targetRotationOnMouseDown = 0;
-let mouseX = 0;
-let mouseXOnMouseDown = 0;
 let fontIndex = 1;
 
 init();
@@ -62,35 +55,14 @@ init();
 animate();
 
 function init() {
-  container = document.createElement('div');
-  document.body.appendChild(container);
-
-
   materials = [
     new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }), // front
     new THREE.MeshPhongMaterial({ color: 0xffffff }) // side
   ];
 
-  group = new THREE.Group();
-  group.position.y = 100;
-  scene.add(group);
 
   loadFont();
 
-  let plane = new THREE.Mesh(
-    new THREE.PlaneBufferGeometry(10000, 10000),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.5, transparent: true })
-  );
-  plane.position.y = 100;
-  plane.rotation.x = -Math.PI / 2;
-  scene.add(plane);
-
-  container.appendChild(renderer.domElement);
-
-  // EVENTS
-  document.addEventListener('mousedown', onDocumentMouseDown, false);
-  document.addEventListener('touchstart', onDocumentTouchStart, false);
-  document.addEventListener('touchmove', onDocumentTouchMove, false);
 }
 
 function loadFont() {
@@ -163,40 +135,6 @@ function refreshText() {
   createText();
 }
 
-function onDocumentMouseDown(event) {
-  event.preventDefault();
-  document.addEventListener('mousemove', onDocumentMouseMove, false);
-  document.addEventListener('mouseup', onDocumentMouseUp, false);
-  mouseXOnMouseDown = event.clientX - window.innerWidth / 2;
-  targetRotationOnMouseDown = targetRotation;
-}
-
-function onDocumentMouseMove(event) {
-  mouseX = event.clientX - window.innerWidth / 2;
-  targetRotation = targetRotationOnMouseDown + (mouseX - mouseXOnMouseDown) * 0.02;
-}
-
-function onDocumentMouseUp(event) {
-  document.removeEventListener('mousemove', onDocumentMouseMove, false);
-  document.removeEventListener('mouseup', onDocumentMouseUp, false);
-}
-
-
-function onDocumentTouchStart(event) {
-  if (event.touches.length === 1) {
-    event.preventDefault();
-    mouseXOnMouseDown = event.touches[0].pageX - window.innerWidth / 2;
-    targetRotationOnMouseDown = targetRotation;
-  }
-}
-
-function onDocumentTouchMove(event) {
-  if (event.touches.length === 1) {
-    event.preventDefault();
-    mouseX = event.touches[0].pageX - window.innerWidth / 2;
-    targetRotation = targetRotationOnMouseDown + (mouseX - mouseXOnMouseDown) * 0.05;
-  }
-}
 
 //
 function animate() {
@@ -205,7 +143,7 @@ function animate() {
 }
 
 function render() {
-  group.rotation.y += (targetRotation - group.rotation.y) * 0.05;
+  group.rotation.y += (targetRotation.value - group.rotation.y) * 0.05;
   camera.lookAt(cameraTarget);
   renderer.clear();
   renderer.render(scene, camera);
