@@ -154,6 +154,8 @@ function init() {
   document.addEventListener('mousedown', onDocumentMouseDown, false);
   document.addEventListener('touchstart', onDocumentTouchStart, false);
   document.addEventListener('touchmove', onDocumentTouchMove, false);
+  document.addEventListener('keypress', onDocumentKeyPress, false);
+  document.addEventListener('keydown', onDocumentKeyDown, false);
 
   document.getElementById('color').addEventListener('click', function() {
     pointLight.color.setHSL(Math.random(), 1, 0.5);
@@ -198,6 +200,33 @@ function updatePermalink() {
   let link = hex + fontMap[fontName] + weightMap[fontWeight] + boolToNum(bevelEnabled) + '#' + encodeURI(text);
   permalink.href = '#' + link;
   window.location.hash = link;
+}
+
+function onDocumentKeyDown(event) {
+  if (firstLetter) {
+    firstLetter = false;
+    text = '';
+  }
+  let keyCode = event.keyCode;
+  // backspace
+  if (keyCode === 8) {
+    event.preventDefault();
+    text = text.substring(0, text.length - 1);
+    refreshText();
+    return false;
+  }
+}
+
+function onDocumentKeyPress(event) {
+  let keyCode = event.which;
+  // backspace
+  if (keyCode === 8) {
+    event.preventDefault();
+  } else {
+    let ch = String.fromCharCode(keyCode);
+    text += ch;
+    refreshText();
+  }
 }
 
 function loadFont() {
