@@ -9,11 +9,9 @@ http://learningwebgl.com/blog/?p=28
 
 https://threejs.org/examples/#webgl_shadowmap
 
-### good beginer videos:
+### good videos for beginers:
 
-https://www.youtube.com/watch?v=bfYzKjhdyu8&t=826s
-
-https://vasilika.ru/
+https://www.youtube.com/watch?v=bfYzKjhdyu8&t=826s (pdf https://vasilika.ru/)
 
 https://www.youtube.com/watch?v=O8cRa9HNlOQ
 
