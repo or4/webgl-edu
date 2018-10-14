@@ -1,17 +1,10 @@
 import { scene } from './scene.js';
-import { camera, cameraTarget } from './camera.js';
-import { renderer } from './renderer.js';
-import { targetRotation } from './dom/index.js';
 import { group } from './group.js';
-import * as plane from './plane.js';
-
-
-THREE.Cache.enabled = true;
+import { materials } from './materials.js';
 
 let textMesh1;
 let textMesh2;
 let textGeo;
-let materials;
 
 let text = 'Yandex';
 let height = 20; // depth for text
@@ -19,58 +12,27 @@ let size = 70;
 let bevelEnabled = true; // bold
 
 let font;
-let fontName = 'optimer'; // helvetiker, optimer, gentilis, droid sans, droid seri;
-let fontWeight = 'bold'; // normal bol;
 
 let mirror = true;
 
-let fontMap = {
-  'helvetiker': 0,
-  'optimer': 1,
-  'gentilis': 2,
-  'droid/droid_sans': 3,
-  'droid/droid_serif': 4
-};
-
-let weightMap = {
-  'regular': 0,
-  'bold': 1
-};
-
-let reverseFontMap = [];
-let reverseWeightMap = [];
-
-for (const i in fontMap) {
-  reverseFontMap[fontMap[i]] = i;
-}
-
-for (const i in weightMap) {
-  reverseWeightMap[weightMap[i]] = i;
-}
-
-let fontIndex = 1;
 
 init();
 
-animate();
-
 function init() {
-  materials = [
-    new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }), // front
-    new THREE.MeshPhongMaterial({ color: 0xffffff }) // side
-  ];
-
-
-  loadFont();
-
-}
-
-function loadFont() {
-  let loader = new THREE.FontLoader();
+  const fontName = 'optimer'; // helvetiker, optimer, gentilis, droid sans, droid seri;
+  const fontWeight = 'bold'; // normal bol;
+  const loader = new THREE.FontLoader();
   loader.load('fonts/' + fontName + '_' + fontWeight + '.typeface.json', function (response) {
     font = response;
     refreshText();
   });
+}
+
+function refreshText() {
+  group.remove(textMesh1);
+  if (mirror) group.remove(textMesh2);
+  if (!text) return;
+  createText();
 }
 
 function createText() {
@@ -108,7 +70,8 @@ function createText() {
       }
     }
   }
-  let centerOffset = -0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x);
+
+  const centerOffset = -0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x);
   textGeo = new THREE.BufferGeometry().fromGeometry(textGeo);
   textMesh1 = new THREE.Mesh(textGeo, materials);
   textMesh1.position.x = centerOffset;
@@ -126,25 +89,4 @@ function createText() {
     textMesh2.rotation.y = Math.PI * 2;
     group.add(textMesh2);
   }
-}
-
-function refreshText() {
-  group.remove(textMesh1);
-  if (mirror) group.remove(textMesh2);
-  if (!text) return;
-  createText();
-}
-
-
-//
-function animate() {
-  requestAnimationFrame(animate);
-  render();
-}
-
-function render() {
-  group.rotation.y += (targetRotation.value - group.rotation.y) * 0.05;
-  camera.lookAt(cameraTarget);
-  renderer.clear();
-  renderer.render(scene, camera);
 }
