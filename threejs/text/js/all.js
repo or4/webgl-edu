@@ -1,6 +1,7 @@
 import { scene } from './scene.js';
 import { camera, cameraTarget } from './camera.js';
 import { renderer } from './renderer.js';
+import * as dom from './dom.js';
 
 if (WEBGL.isWebGLAvailable() === false) {
   document.body.appendChild(WEBGL.getWebGLErrorMessage());
@@ -54,8 +55,6 @@ let targetRotation = 0;
 let targetRotationOnMouseDown = 0;
 let mouseX = 0;
 let mouseXOnMouseDown = 0;
-let windowHalfX = window.innerWidth / 2;
-let windowHalfY = window.innerHeight / 2;
 let fontIndex = 1;
 
 init();
@@ -92,37 +91,6 @@ function init() {
   document.addEventListener('mousedown', onDocumentMouseDown, false);
   document.addEventListener('touchstart', onDocumentTouchStart, false);
   document.addEventListener('touchmove', onDocumentTouchMove, false);
-
-  document.getElementById('color').addEventListener('click', function() {
-    pointLight.color.setHSL(Math.random(), 1, 0.5);
-  }, false);
-  document.getElementById('font').addEventListener('click', function() {
-    fontIndex++;
-    fontName = reverseFontMap[fontIndex % reverseFontMap.length];
-    loadFont();
-  }, false);
-  document.getElementById('weight').addEventListener('click', function() {
-    if (fontWeight === 'bold') {
-      fontWeight = 'regular';
-    } else {
-      fontWeight = 'bold';
-    }
-    loadFont();
-  }, false);
-  document.getElementById('bevel').addEventListener('click', function() {
-    bevelEnabled = !bevelEnabled;
-    refreshText();
-  }, false);
-  //
-  window.addEventListener('resize', onWindowResize, false);
-}
-
-function onWindowResize() {
-  windowHalfX = window.innerWidth / 2;
-  windowHalfY = window.innerHeight / 2;
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 function loadFont() {
@@ -199,12 +167,12 @@ function onDocumentMouseDown(event) {
   event.preventDefault();
   document.addEventListener('mousemove', onDocumentMouseMove, false);
   document.addEventListener('mouseup', onDocumentMouseUp, false);
-  mouseXOnMouseDown = event.clientX - windowHalfX;
+  mouseXOnMouseDown = event.clientX - window.innerWidth / 2;
   targetRotationOnMouseDown = targetRotation;
 }
 
 function onDocumentMouseMove(event) {
-  mouseX = event.clientX - windowHalfX;
+  mouseX = event.clientX - window.innerWidth / 2;
   targetRotation = targetRotationOnMouseDown + (mouseX - mouseXOnMouseDown) * 0.02;
 }
 
@@ -217,7 +185,7 @@ function onDocumentMouseUp(event) {
 function onDocumentTouchStart(event) {
   if (event.touches.length === 1) {
     event.preventDefault();
-    mouseXOnMouseDown = event.touches[0].pageX - windowHalfX;
+    mouseXOnMouseDown = event.touches[0].pageX - window.innerWidth / 2;
     targetRotationOnMouseDown = targetRotation;
   }
 }
@@ -225,7 +193,7 @@ function onDocumentTouchStart(event) {
 function onDocumentTouchMove(event) {
   if (event.touches.length === 1) {
     event.preventDefault();
-    mouseX = event.touches[0].pageX - windowHalfX;
+    mouseX = event.touches[0].pageX - window.innerWidth / 2;
     targetRotation = targetRotationOnMouseDown + (mouseX - mouseXOnMouseDown) * 0.05;
   }
 }
