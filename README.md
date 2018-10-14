@@ -3,11 +3,13 @@
 ### glmatrix
 ### three.js
 
-forked from
+### forked from
+
 http://learningwebgl.com/blog/?p=28
+
 https://threejs.org/examples/#webgl_shadowmap
 
-good beginer videos:
+### good beginer videos:
 
 https://www.youtube.com/watch?v=bfYzKjhdyu8&t=826s
 
