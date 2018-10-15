@@ -12,7 +12,17 @@ function animate() {
 }
 
 function render() {
-  group.rotation.y += (targetRotation.value - group.rotation.y) * 0.05;
+  const speed = 0.015;
+  let value = (targetRotation.value - group.rotation.y) * 0.05;
+  if (value < 0) {
+    targetRotation.value -= speed;
+  } else if (value > 0 || value === 0) {
+    targetRotation.value += speed;
+  }
+
+  value = (targetRotation.value - group.rotation.y) * 0.05;
+  group.rotation.y += value;
+
   camera.lookAt(cameraTarget);
   renderer.clear();
   renderer.render(scene, camera);

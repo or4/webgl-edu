@@ -1,6 +1,7 @@
+
 // SCENE
 export const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x000000);
+scene.background = new THREE.Color(0xFFFFFF);
 scene.fog = new THREE.Fog(0x000000, 250, 1400);
 
 // LIGHTS
@@ -13,6 +14,6 @@ pointLight.position.set(0, 100, 90);
 scene.add(pointLight);
 
 // Get text from hash
-let hash = document.location.hash.substr(1);
-pointLight.color.setHSL(Math.random(), 1, 0.5);
-
+const color = Math.random();
+// const color = 0.6640553208162103;
+pointLight.color.setHSL(color, 1, 0.5);
