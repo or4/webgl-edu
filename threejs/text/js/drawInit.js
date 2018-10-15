@@ -10,7 +10,11 @@ const fontLoad = async () => {
     // const url = 'fonts/optimer_bold.typeface.json';
     // const url = 'fonts/ubuntu_regular.typeface.json';
     // const url = 'fonts/ubuntu_bold.typeface.json';
-    const url = 'fonts/mali_regular.typeface.json';
+    // const url = 'fonts/mali_regular.typeface.json';
+    // const url = 'fonts/h&b_regular.typeface.json';
+    // const url = 'fonts/habana_regular.typeface.json';
+    const url = 'fonts/Happy brown cat_Regular.json';
+    // const url = 'fonts/Happy brown cat shadow_Regular.json';
     new THREE.FontLoader().load(url, function (response) {
       resolve(response);
     });
@@ -22,18 +26,17 @@ init();
 async function init() {
   const font = await fontLoad();
 
-  const height = 20; // depth for text
+  const height = 10; // depth for text
   const size = 50;
-  const bevelEnabled = false;
 
-  const textGeo = new THREE.TextGeometry('Test123', {
+  const textGeo = new THREE.TextGeometry('ALLMAX', {
     font: font,
     size: size,
     height: height,
     curveSegments: 4,
     bevelThickness: 2,
     bevelSize: 1.5,
-    bevelEnabled, // bold
+    bevelEnabled: false, // bold
   });
 
   textGeo.computeBoundingBox();
@@ -41,32 +44,32 @@ async function init() {
 
   // "fix" side normals by removing z-component of normals for side faces
   // (this doesn't work well for beveled geometry as then we lose nice curvature around z-axis)
-  // if (!bevelEnabled) {
+  // if (true) {
 
-  //   let triangleAreaHeuristics = 0.1 * (height * size);
+  let triangleAreaHeuristics = 0.2 * (height * size);
 
-  //   for (let i = 0; i < textGeo.faces.length; i++) {
-  //     let face = textGeo.faces[i];
+  for (let i = 0; i < textGeo.faces.length; i++) {
+    let face = textGeo.faces[i];
 
-  //     if (face.materialIndex === 1) {
+    if (face.materialIndex === 1) {
 
-  //       for (let j = 0; j < face.vertexNormals.length; j++) {
-  //         face.vertexNormals[j].z = 0;
-  //         face.vertexNormals[j].normalize();
-  //       }
+      for (let j = 0; j < face.vertexNormals.length; j++) {
+        face.vertexNormals[j].z = 0;
+        face.vertexNormals[j].normalize();
+      }
 
-  //       const va = textGeo.vertices[face.a];
-  //       const vb = textGeo.vertices[face.b];
-  //       const vc = textGeo.vertices[face.c];
-  //       const s = THREE.GeometryUtils.triangleArea(va, vb, vc);
+      const va = textGeo.vertices[face.a];
+      const vb = textGeo.vertices[face.b];
+      const vc = textGeo.vertices[face.c];
+      const s = THREE.GeometryUtils.triangleArea(va, vb, vc);
 
-  //       if (s > triangleAreaHeuristics) {
-  //         for (let j = 0; j < face.vertexNormals.length; j++) {
-  //           face.vertexNormals[j].copy(face.normal);
-  //         }
-  //       }
-  //     }
-  //   }
+      // if (s > triangleAreaHeuristics) {
+      for (let j = 0; j < face.vertexNormals.length; j++) {
+        face.vertexNormals[j].copy(face.normal);
+      }
+      // }
+    }
+  }
   // }
 
   const centerOffset = -0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x);
