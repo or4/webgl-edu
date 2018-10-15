@@ -19,7 +19,7 @@ async function init() {
   const font = await fontLoad();
 
   const mirror = true;
-  const text = 'Yandex';
+  const text = 'Test123';
   const height = 20; // depth for text
   const size = 70;
   const bevelEnabled = true; // bold
